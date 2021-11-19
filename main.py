@@ -24,14 +24,15 @@ app.add_middleware(
 def hello():
     return {"message":"hihi"}
 
+# 吃網站上傳的 csv 進來
 @app.post("/uploadfile/")
 async def create_file(file: UploadFile = File(...)):
     content = await file.read()
-    content2 = content.decode('utf-8')
+    content2 = content.decode('utf-8') #更改csv編碼
 
     """start ortools routing"""
-    routes = str2df(content2) #回傳路線routes as list
-    routes_json = json.dumps(routes)
+    routes = str2df(content2) #取得路線routes as list
+    routes_json = json.dumps(routes) #以json格式回傳路線給網站
     
     return {
         "filename" : file.filename,
