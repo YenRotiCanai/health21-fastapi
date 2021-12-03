@@ -5,7 +5,7 @@ from firebase_admin import db
 import json
 import pandas as pd
 
-cred = credentials.Certificate("./maptestfirebase-72508-firebase-adminsdk-hekht-06ad28a456.json")
+cred = credentials.Certificate("./credentials2.json")
 databaseURL= "https://maptestfirebase-72508-default-rtdb.asia-southeast1.firebasedatabase.app"
 
 firebase_admin.initialize_app(cred,{
