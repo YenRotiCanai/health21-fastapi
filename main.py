@@ -1,6 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from firebase_admin.credentials import Base
 from pydantic import BaseModel
 
 from io import StringIO
@@ -9,7 +8,7 @@ import json
 import pandas as pd
 
 from routing import main
-from firestore_db import set_sheet
+from firestore_db import set_sheet, get_sheet
 
 app = FastAPI()
 
@@ -57,27 +56,23 @@ def str2df(data):
     routes = main(df) # call main function
     return routes
 
-# @app.post("/regSheet/")
-# def regSheet(regArea, regRouteNum, regSheetID):
-#     return{
-#         "area":regArea,
-#         "routeNum":regRouteNum,
-#         "sheetID":regSheetID
-#     }
-
 @app.post("/regSheet/")
 def regSheet(sheet: sheetInfo):
     set_sheet(sheet.area, sheet.routeNum, sheet.sheetID)
-    
+
     return{
         "area":sheet.area,
         "routeNum":sheet.routeNum,
         "sheetID":sheet.sheetID
     }
 
-# @app.get("/getSheet/{mapArea}")
-# def getSheet(mapArea):
-#     return{
-
-#     }
+@app.get("/getSheet/{mapArea}")
+def getSheet(mapArea):
+    gs = get_sheet(mapArea)
+    # gs_JSON = json.dumps(gs)
+    return{
+        "area":mapArea,
+        "routeNum":gs['regRouteNum'],
+        "sheetID":gs['regSheetID']
+    }
 
