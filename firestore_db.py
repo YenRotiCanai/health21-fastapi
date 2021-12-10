@@ -54,4 +54,4 @@ def get_mapArea():
 
     return doc_dict
 
-get_mapArea()
+# get_mapArea()
