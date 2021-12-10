@@ -9,7 +9,7 @@ import pandas as pd
 
 from routing import main_routing
 from sheet import main_sheet2df, route2df, routeListSheet2json
-from firestore_db import set_sheet, get_sheet
+from firestore_db import set_sheet, get_sheet, get_mapArea
 
 app = FastAPI()
 
@@ -98,3 +98,7 @@ def getSheet(mapArea):
         "routesJson": routesJson
     }
 
+@app.get("/getMapArea/")
+def get_mapAreaSelection():
+    
+    return get_mapArea()

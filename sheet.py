@@ -44,7 +44,6 @@ def calc_dist(origin, destination):
     text_split = text.split(" ")
     dist = text_split[0]
 
-    print("calc_dis done")
     return dist
 
 def main_sheet2df(sheetUrl):

@@ -39,3 +39,19 @@ def get_sheet(mapArea):
     # doc_JSON = json.dumps(doc_data)
     print(doc_data)
     return doc_data
+
+def get_mapArea():
+    docs_ref = db.collection('sheet_Info').document(event_name).collection('area')
+    docs = docs_ref.stream()
+    # for doc in docs:
+    #     print(f'{doc.id} => {doc.to_dict()}')
+
+    doc_dict = {}
+    for doc in docs:
+        doc_dict[doc.id] = doc.to_dict()
+
+    print(doc_dict)
+
+    return doc_dict
+
+get_mapArea()
