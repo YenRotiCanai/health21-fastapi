@@ -21,22 +21,29 @@ def create_data(df):
     data['addresses'] = []
 
     for i in range(len(df)):
-        data['addresses'].append(df['地址'][i])
+        data['addresses'].append(df['取餐地點'][i])
 
     return data
 
 def create_distance_matrix(data):
-    addresses = data["addresses"]
-    API_key = data["API_key"]
+    addresses = data['addresses']
+    API_key = data['API_key']
+    # print(addresses)
+    # print(API_key)
+
     # Distance Matrix API only accepts 100 elements per request, so get rows in multiple requests.
     max_elements = 100
     num_addresses = len(addresses) # 16 in this example.
+
     # Maximum number of rows that can be computed per request (6 in this example).
     max_rows = max_elements // num_addresses
+    # print("maxrow: "+ str(max_rows))
+
     # num_addresses = q * max_rows + r (q = 2 and r = 4 in this example).
     q, r = divmod(num_addresses, max_rows)
     dest_addresses = addresses
     distance_matrix = []
+    
     # Send q requests, returning max_rows rows per request.
     for i in range(q):
         origin_addresses = addresses[i * max_rows: (i + 1) * max_rows]
@@ -90,11 +97,11 @@ def build_distance_matrix(response):
 #----------------#
 # Routing #
 
-def create_data_model(distance_matrix):
+def create_data_model(distance_matrix, num_vehicles):
     """Stores the data for the problem."""
     # data2 = {}
     data2['distance_matrix'] = distance_matrix
-    data2['num_vehicles'] = 3
+    data2['num_vehicles'] = num_vehicles
     data2['depot'] = 0
     return data2
 
@@ -133,7 +140,7 @@ def get_routes(solution, routing, manager):
         routes.append(route)
     return routes
 
-def main(df):
+def main_routing(df, num_vehicles):
     """Entry point of the program"""
     # Create the data.
     data = create_data(df)
@@ -146,7 +153,7 @@ def main(df):
     print(data)
 
     # Instantiate the data problem.
-    data2 = create_data_model(distance_matrix)
+    data2 = create_data_model(distance_matrix, num_vehicles)
     print("data2:")
     print(data2)
 
@@ -202,3 +209,8 @@ def main(df):
         print('Route', i, route)
 
     return routes
+
+# df = pd.read_csv('SheetDemo3.csv')
+
+# r = main(df, 3)
+# print(r)

@@ -21,13 +21,13 @@ event_name = "event " + str(event_no)
 # regRouteNum = 3
 # regSheetID = '02e12lkfdgu4032958430qehkjhk432kjkjh'
 
-def set_sheet(regArea, regRouteNum, regSheetID):
+def set_sheet(regArea, regRouteNum, regSheetUrl):
     sheet_ref = db.collection('sheet_Info').document(event_name).collection('area').document(regArea)
     # sheet_ref = db.collection(u'sheet_Info').document('event1')
     sheet_ref.set({
         # 'regArea': regArea,
         'regRouteNum': regRouteNum,
-        'regSheetID': regSheetID
+        'regSheetUrl': regSheetUrl
     })
 
 # set_sheet(regArea,regRouteNum,regSheetID)
@@ -36,6 +36,6 @@ def get_sheet(mapArea):
     sheet_ref = db.collection('sheet_Info').document(event_name).collection('area').document(mapArea)
     doc = sheet_ref.get()
     doc_data = doc.to_dict()
-    doc_JSON = json.dumps(doc_data)
+    # doc_JSON = json.dumps(doc_data)
     print(doc_data)
     return doc_data

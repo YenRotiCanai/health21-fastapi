@@ -7,7 +7,8 @@ from io import StringIO
 import json
 import pandas as pd
 
-from routing import main
+from routing import main_routing
+from sheet import main_sheet2df, route2df, routeListSheet2json
 from firestore_db import set_sheet, get_sheet
 
 app = FastAPI()
@@ -25,7 +26,7 @@ app.add_middleware(
 class sheetInfo(BaseModel):
     area: str
     routeNum: int
-    sheetID: str
+    sheetUrl: str
 
 
 @app.get("/")
@@ -53,26 +54,47 @@ def str2df(data):
     print(df.head())
     # d = create_data(df)
     # print(d)
-    routes = main(df) # call main function
+    routes = main_routing(df) # call main function
     return routes
 
 @app.post("/regSheet/")
 def regSheet(sheet: sheetInfo):
-    set_sheet(sheet.area, sheet.routeNum, sheet.sheetID)
+
+    area = sheet.area
+    routeNum = sheet.routeNum
+    sheetUrl = sheet.sheetUrl
+
+    # 登錄資料到 firebase 上面
+    set_sheet(area, routeNum, sheetUrl)
+    
+    # 自動計算經緯度和距離後，新增一個工作表來放
+    # 最後回傳一個 dataframe
+    df = main_sheet2df(sheetUrl)
+    
+    # # 呼叫路線分組 func，回傳路線的 list
+    routes = main_routing(df, routeNum)
+
+    # # 把路線變成 dataframe 存到新的工作表
+    route2df(df, routes, sheetUrl)
 
     return{
-        "area":sheet.area,
-        "routeNum":sheet.routeNum,
-        "sheetID":sheet.sheetID
+        "area":area,
+        "routeNum":routeNum,
+        "sheetUrl":sheetUrl,
+        "routesJson":json.dumps(routes)
     }
 
 @app.get("/getSheet/{mapArea}")
 def getSheet(mapArea):
     gs = get_sheet(mapArea)
+    print(gs['regSheetID'])
+    routesJson = routeListSheet2json(gs['regSheetID'])
+    print(routesJson)
     # gs_JSON = json.dumps(gs)
     return{
         "area":mapArea,
         "routeNum":gs['regRouteNum'],
-        "sheetID":gs['regSheetID']
+        "sheetUrl":gs['regSheetID'],
+        "routesJson": routesJson
     }
 
