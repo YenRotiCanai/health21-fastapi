@@ -91,14 +91,14 @@ def main_sheet2df(sheetUrl):
 def route2df(df, routes, sheetUrl):
     sheet = gAuth.open_by_url(sheetUrl)
 
-    r_df = pd.DataFrame(columns=['路線編號','送餐順序'])
+    # r_df = pd.DataFrame(columns=['路線編號','送餐順序'])
   
-    for i in range(len(routes)):
-        r_df.loc[i] = [i+1, routes[i]]
+    # for i in range(len(routes)):
+    #     r_df.loc[i] = [i+1, routes[i]]
 
-    sheet.add_worksheet('路線順序')
-    wksRoutes = sheet.worksheet_by_title('路線順序')
-    wksRoutes.set_dataframe(r_df,(1,1))
+    # sheet.add_worksheet('路線順序')
+    # wksRoutes = sheet.worksheet_by_title('路線順序')
+    # wksRoutes.set_dataframe(r_df,(1,1))
 
     deliverList_df = pd.DataFrame()
     for i in range(len(routes)):
@@ -106,8 +106,9 @@ def route2df(df, routes, sheetUrl):
             order = routes[i][j]
             deliverList_df = deliverList_df.append(df.loc[order])
 
-    deliverList_df.reset_index(inplace=True)
-    deliverList_df.rename(columns={'index':'順序編號'}, inplace=True)
+    # 把順序編號加到 df 裡
+    # deliverList_df.reset_index(inplace=True)
+    # deliverList_df.rename(columns={'index':'順序編號'}, inplace=True)
 
     sheet.add_worksheet('送餐順序名單')
     wksRoutesList = sheet.worksheet_by_title('送餐順序名單')

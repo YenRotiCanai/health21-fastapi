@@ -131,6 +131,7 @@ def get_routes(solution, routing, manager):
     """Get vehicle routes from a solution and store them in an array."""
     # Get vehicle routes and store them in a two dimensional array whose
     # i,j entry is the jth location visited by vehicle i along its route.
+    routes = []
     for route_nbr in range(routing.vehicles()):
         index = routing.Start(route_nbr)
         route = [manager.IndexToNode(index)]
@@ -146,7 +147,7 @@ def main_routing(df, num_vehicles):
     data = create_data(df)
     # addresses = data['addresses']
     # API_key = data['API_key']
-    distance_matrix = create_distance_matrix(data) ##主要是這個要拉出來跑，不然會 crash
+    distance_matrix = create_distance_matrix(data)
     print("distance matrix:")
     print(distance_matrix)
     print("data:")
@@ -202,6 +203,7 @@ def main_routing(df, num_vehicles):
         print_solution(data2, manager, routing, solution)
     else:
         print('No solution found !')
+
 
     routes = get_routes(solution, routing, manager)
     # Display the routes.

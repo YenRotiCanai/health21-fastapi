@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -24,8 +25,8 @@ app.add_middleware(
 )
 
 class sheetInfo(BaseModel):
-    area: str
-    routeNum: int
+    area: Optional[str] = None
+    routeNum: Optional[int] = None
     sheetUrl: str
 
 
@@ -63,9 +64,6 @@ def regSheet(sheet: sheetInfo):
     area = sheet.area
     routeNum = sheet.routeNum
     sheetUrl = sheet.sheetUrl
-
-    # 登錄資料到 firebase 上面
-    set_sheet(area, routeNum, sheetUrl)
     
     # 自動計算經緯度和距離後，新增一個工作表來放
     # 最後回傳一個 dataframe
@@ -73,6 +71,9 @@ def regSheet(sheet: sheetInfo):
     
     # # 呼叫路線分組 func，回傳路線的 list
     routes = main_routing(df, routeNum)
+
+    # 登錄資料到 firebase 上面
+    set_sheet(area, routeNum, sheetUrl, routes)
 
     # # 把路線變成 dataframe 存到新的工作表
     route2df(df, routes, sheetUrl)
@@ -84,17 +85,18 @@ def regSheet(sheet: sheetInfo):
         "routesJson":json.dumps(routes)
     }
 
-@app.get("/getSheet/{mapArea}")
-def getSheet(mapArea):
-    gs = get_sheet(mapArea)
-    print(gs['regSheetID'])
-    routesJson = routeListSheet2json(gs['regSheetID'])
-    print(routesJson)
+@app.post("/getSheet")
+def getSheet(sheet:sheetInfo):
+    # gs = get_sheet(mapArea)
+    # print(gs['sheetUrl'])
+
+    routesJson = routeListSheet2json(sheet.sheetUrl)
+    # print(routesJson)
     # gs_JSON = json.dumps(gs)
     return{
-        "area":mapArea,
-        "routeNum":gs['regRouteNum'],
-        "sheetUrl":gs['regSheetID'],
+        # "area":mapArea,
+        # "routeNum":gs['routeNum'],
+        # "sheetUrl":gs['sheetUrl'],
         "routesJson": routesJson
     }
 
